@@ -1,7 +1,7 @@
-algolia-toolkit
+algolia-command-bundle
 ===============
 
-Symfony Algolia Toolkit providing access to the Algolia API using Commands. 
+Symfony Algolia CommandBundle provides access to the Algolia API using Symfony Commands.
 
 See [Algolia REST Documentation](http://www.algolia.com/doc/rest_api)
 
