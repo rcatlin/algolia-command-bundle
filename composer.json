@@ -1,15 +1,16 @@
 {
-    "name": "rcatlin/algolia-toolkit",
-    "description": "Symfony Algolia Toolkit providing access to the Algolia API using Commands.",
+    "name": "rcatlin/algolia-command-bundle",
+    "description": "Symfony Algolia CommandBundle provides access to the Algolia API using Symfony Commands.",
     "require": {
         "php": ">=5.3.2",
         "algolia/algoliasearch-client-php": "1.2.*" ,
-        "symfony/console": ">2.1"
+        "symfony/framework-standard-edition": "2.5.*@dev",
+        "psr/log": "1.0.*@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.14",
+        "phpunit/phpunit": "3.7.*",
         "fabpot/php-cs-fixer": "0.4.*@dev",
-        "psr/log": "1.0.*@dev"
+        "sensio/generator-bundle": "2.3.*@dev"
     },
     "license": "MIT",
     "authors": [
@@ -19,7 +20,7 @@
         }
     ],
     "autoload": {
-        "psr-0": { "AlgoliaToolkit": "src" }
+        "psr-0": { "AlgoliaCommandBundle": "src" }
     },
     "minimum-stability": "dev"
 }

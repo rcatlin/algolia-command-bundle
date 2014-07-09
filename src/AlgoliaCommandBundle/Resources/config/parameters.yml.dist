@@ -1,0 +1,3 @@
+parameters:
+    algolia_api_key: your-api-key
+    algolia_application_id: your-application-id
