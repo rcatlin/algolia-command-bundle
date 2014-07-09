@@ -2,7 +2,6 @@
 
 namespace AlgoliaCommandBundle\Command;
 
-use Psr\Log\AbstractLogger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,10 +17,8 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
     /**
      * {@inheritDoc}
      */
-    public function __construct(AbstractLogger $logger = null)
+    public function __construct()
     {
-        $this->logger = $logger;
-
         // Initializes definition, sets name and calls configure()
         parent::__construct($this->getName());
 
@@ -42,6 +39,8 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->addOption(
                 self::API_KEY_OPTION_KEY,       // alias
@@ -64,6 +63,8 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        parent::intialize($input, $output);
+
         if ($input->hasOption(self::API_KEY_OPTION_KEY)) {
             $this->apiKey = $input->getOption(self::API_KEY_OPTION_KEY);
         }
