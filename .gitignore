@@ -13,7 +13,7 @@
 
 # Managed by Composer
 /app/bootstrap.php.cache
-/bin/
+#/bin/
 /vendor/
 
 # Assets and user uploads
