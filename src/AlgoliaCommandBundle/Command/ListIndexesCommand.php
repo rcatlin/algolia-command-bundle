@@ -13,6 +13,7 @@ class ListIndexesCommand extends AbstractAlgoliaCommand
             $output->writeln($this->client->listIndexes());
         } catch (\Exception $e) {
             $output->writeln($e->getMessage());
+
             return parent::STATUS_CODE_ERROR;
         }
     }
@@ -20,5 +21,5 @@ class ListIndexesCommand extends AbstractAlgoliaCommand
     public function getName()
     {
         return 'algolia:list-indexes';
-    }    
+    }
 }

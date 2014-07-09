@@ -83,7 +83,7 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
             throw new \LogicException('Algolia Application ID must be provided.');
         }
 
-        $this->client = $this->createClient();            
+        $this->client = $this->createClient();
     }
 
     /**

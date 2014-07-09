@@ -9,5 +9,5 @@ class AlgoliaCommandBundleTestCase extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder($class)
             ->disableOriginalConstructor()
             ->getMock();
-    }   
+    }
 }
