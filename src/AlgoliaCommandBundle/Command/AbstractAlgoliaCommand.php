@@ -4,15 +4,20 @@ namespace AlgoliaCommandBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AlgoliaSearch\Client;
 
 abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
 {
     CONST API_KEY_OPTION_KEY        = 'api-key';
     CONST APPLICATION_ID_OPTION_KEY = 'application-id';
+    CONST STATUS_CODE_ERROR = 1;
+
     private $apiKey;
     private $applicationId;
     protected $logger;
+    protected $client;
 
     /**
      * {@inheritDoc}
@@ -21,17 +26,6 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
     {
         // Initializes definition, sets name and calls configure()
         parent::__construct($this->getName());
-
-        if (!$this->apiKey && !$this->applicationId) {
-            throw new \LogicException('Both an Algolia API key and Application ID must be provided.');
-        }
-        if (!$this->apiKey) {
-            throw new \LogicException('An Algolia API key must be provided.');
-        }
-
-        if (!$this->applicationId) {
-            throw new \LogicException('An Algolia Application ID must be provided');
-        }
     }
 
     /**
@@ -88,6 +82,8 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
         if (!$this->applicationId) {
             throw new \LogicException('Algolia Application ID must be provided.');
         }
+
+        $this->client = $this->createClient();            
     }
 
     /**
@@ -107,12 +103,10 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
     }
 
     /**
-     * @return string
+     * @return AlgoliaSearch\Client
      */
-    abstract public function getName();
-
-    /**
-     * @return alias
-     */
-    abstract public function getAlias();
+    protected function createClient()
+    {
+        return new Client($this->applicationId, $this->apiKey);
+    }
 }
