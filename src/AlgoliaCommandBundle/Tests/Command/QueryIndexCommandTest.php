@@ -2,23 +2,16 @@
 
 namespace AlgoliaCommandBundle\Tests\Command;
 
-use AlgoliaCommandBundle\Command\AbstractAlgoliaCommand;
 use AlgoliaCommandBundle\Query\QueryOptions;
 use AlgoliaCommandBundle\Command\QueryIndexCommand;
 use AlgoliaCommandBundle\Tests\AlgoliaCommandBundleTestCase;
 use AlgoliaSearch\Client;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
 {
-    private $apiKey;
-    private $applicationId;
-
     private $output;
     private $client;
     private $container;
@@ -26,21 +19,11 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
 
     protected function setUp()
     {
-        $this->apiKey = 'api-key';
-        $this->applicationId = 'application-id';
-
         $this->client = $this->buildMock('AlgoliaSearch\Client');
         $this->output = $this->buildMock('Symfony\Component\Console\Output\OutputInterface');
 
         // Setup Container
-        $this->container = new Container(
-            new ParameterBag(
-                array(
-                    AbstractAlgoliaCommand::PARAMETER_API_KEY => $this->apiKey,
-                    AbstractAlgoliaCommand::PARAMETER_APPLICATION_ID => $this->applicationId
-                )
-            )
-        );
+        $this->container = $this->getDefaultContainer();
 
         // Setup Command
         $this->command = new QueryIndexCommandStub();
@@ -116,6 +99,7 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
             $this->output
         );
 
+        // Assertions
         $this->assertEquals(
             $result,
             null
@@ -130,6 +114,7 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
     {
         $input = new ArgvInput(array());
 
+        // Run command
         $this->command->run($input, $this->output);
     }
 
@@ -157,10 +142,5 @@ class QueryIndexCommandStub extends QueryIndexCommand
     public function setClient(Client $client)
     {
         $this->client = $client;
-    }
-
-    public function callProtectedExecute(InputInterface $input, OutputInterface $output)
-    {
-        return $this->execute($input, $output);
     }
 }
