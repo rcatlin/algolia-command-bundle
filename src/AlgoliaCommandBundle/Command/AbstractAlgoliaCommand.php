@@ -10,9 +10,11 @@ use AlgoliaSearch\Client;
 
 abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
 {
-    CONST API_KEY_OPTION_KEY        = 'api-key';
-    CONST APPLICATION_ID_OPTION_KEY = 'application-id';
-    CONST STATUS_CODE_ERROR = 1;
+    CONST OPTION_API_KEY           = 'api-key';
+    CONST OPTION_APPLICATION_ID    = 'application-id';
+    CONST PARAMETER_API_KEY        = 'algolia_api_key';
+    CONST PARAMETER_APPLICATION_ID = 'algolia_application_id';
+    CONST STATUS_CODE_ERROR        = 1;
 
     private $apiKey;
     private $applicationId;
@@ -37,14 +39,14 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
 
         $this
             ->addOption(
-                self::API_KEY_OPTION_KEY,       // alias
+                self::OPTION_API_KEY,           // alias
                 null,                           // shortcut (not provided)
                 InputOption::VALUE_OPTIONAL,    // mode
                 'Algolia API Key',              // description
                 null                            // default (not provided)
             )
             ->addOption(
-                self::APPLICATION_ID_OPTION_KEY,
+                self::OPTION_APPLICATION_ID,
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Algolia Application ID'
@@ -57,22 +59,22 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        parent::intialize($input, $output);
+        parent::initialize($input, $output);
 
-        if ($input->hasOption(self::API_KEY_OPTION_KEY)) {
-            $this->apiKey = $input->getOption(self::API_KEY_OPTION_KEY);
+        if ($input->hasOption(self::OPTION_API_KEY)) {
+            $this->apiKey = $input->getOption(self::OPTION_API_KEY);
         }
 
-        if ($input->hasOption(self::APPLICATION_ID_OPTION_KEY)) {
-            $this->applicationID = $input->getOption(self::APPLICATION_ID_OPTION_KEY);
+        if ($input->hasOption(self::OPTION_APPLICATION_ID)) {
+            $this->applicationID = $input->getOption(self::OPTION_APPLICATION_ID);
         }
 
         if (!$this->apiKey) {
-            $this->apiKey = $this->getContainer()->get('algolia_api_key');
+            $this->apiKey = $this->getContainer()->getParameter(self::PARAMETER_API_KEY);
         }
 
         if (!$this->applicationId) {
-            $this->applicationId = $this->getContainer()->get('algolia_application_id');
+            $this->applicationId = $this->getContainer()->getParameter(self::PARAMETER_APPLICATION_ID);
         }
 
         if (!$this->apiKey) {
