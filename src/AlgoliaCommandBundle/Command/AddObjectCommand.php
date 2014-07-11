@@ -14,7 +14,6 @@ class AddObjectCommand extends AbstractAlgoliaCommand
     CONST ARGUMENT_INDEX = 'index';
     CONST ARGUMENT_CONTENT = 'content';
     CONST OPTION_ID = 'id';
-    CONST ERROR_BAD_JSON_MESSAGE = 'Invalid JSON';
 
     protected function configure()
     {
@@ -34,7 +33,7 @@ class AddObjectCommand extends AbstractAlgoliaCommand
         $content = json_decode($content, true);
 
         if (null === $content) {
-            $output->writeln(self::ERROR_BAD_JSON_MESSAGE);
+            $output->writeln(AbstractAlgoliaCommand::ERROR_BAD_JSON_MESSAGE);
 
             return AbstractAlgoliaCommand::STATUS_CODE_ERROR;
         }

@@ -15,6 +15,7 @@ abstract class AbstractAlgoliaCommand extends ContainerAwareCommand
     CONST PARAMETER_API_KEY        = 'algolia_api_key';
     CONST PARAMETER_APPLICATION_ID = 'algolia_application_id';
     CONST STATUS_CODE_ERROR        = 1;
+    CONST ERROR_BAD_JSON_MESSAGE   = 'Invalid JSON.';
 
     private $apiKey;
     private $applicationId;

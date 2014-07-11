@@ -3,14 +3,14 @@
 namespace AlgoliaCommandBundle\Tests\Command;
 
 use AlgoliaCommandBundle\Command\AbstractAlgoliaCommand;
-use AlgoliaCommandBundle\Command\AddObjectCommand;
+use AlgoliaCommandBundle\Command\BatchWriteCommand;
 use AlgoliaCommandBundle\Tests\AlgoliaCommandBundleTestCase;
 use AlgoliaSearch\AlgoliaException;
 use AlgoliaSearch\Client;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
+class BatchWriteCommandTest extends AlgoliaCommandBundleTestCase
 {
     protected function setUp()
     {
@@ -19,32 +19,37 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
 
         $this->container = $this->getDefaultContainer($this->apiKey, $this->applicationId);
 
-        $this->command = new AddObjectCommandStub();
+        $this->command = new BatchWriteCommandStub();
         $this->command->setClient($this->client);
         $this->command->setContainer($this->container);
     }
 
     public function testExecute()
     {
-        $answer = 'add-object-answer';
-        $indexName = 'add-object-index-name';
-        $id = 'object-id';
-        $content = array(
-            'name' => 'Bill Waterson',
-            'interests' => array(
-                'drawing',
-                'tigers',
-                'the universe',
-                'sledding'
+        $answer = 'answer';
+        $indexName = 'index-name';
+        $objectIDKey = 'object-id-key';
+        $objectActionKey = 'object-action-key';
+        $requests = array(
+            array(
+                $objectIDKey => 'id0',
+                $objectActionKey => 'action0',
+                'vegetable' => 'tomato'
+            ),
+            array(
+                $objectIDKey => 'id1',
+                $objectActionKey => 'action1',
+                'vegetable' => 'celery'
             )
         );
-        $jsonContent = json_encode($content);
+
         $input = new ArgvInput(
             array(
-                AddObjectCommand::NAME,
+                BatchWriteCommand::NAME,
                 $indexName,
-                $jsonContent,
-                '--' . AddObjectCommand::OPTION_ID . '=' . $id,
+                json_encode($requests),
+                '--' . BatchWriteCommand::ARGUMENT_OBJECT_ID_KEY . '=' . $objectIDKey,
+                '--' . BatchWriteCommand::ARGUMENT_OBJECT_ACTION_KEY . '=' . $objectActionKey
             )
         );
         $index = $this->buildMock('AlgoliaSearch\Index');
@@ -57,8 +62,8 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
         ;
 
         $index->expects($this->once())
-            ->method('addObject')
-            ->with($content, $id)
+            ->method('batchObjects')
+            ->with($requests, $objectIDKey, $objectActionKey)
             ->will($this->returnValue($answer))
         ;
 
@@ -80,63 +85,14 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
         );
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
-     */
-    public function testExecuteWithoutIndexNameThrowsException()
+    public function testExecuteWithInvalidJson()
     {
+        $badRequestJson = '{"bad":"json"';
         $input = new ArgvInput(
             array(
-                AddObjectCommand::NAME
-            )
-        );
-        // Run command
-        $result = $this->command->run(
-            $input,
-            $this->output
-        );
-
-        // Assertions
-        $this->assertEquals(
-            $result,
-            null
-        );
-    }
-
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
-     */
-    public function testExcecuteWithoutContentThrowsException()
-    {
-        $input = new ArgvInput(
-            array(
-                AddObjectCommand::NAME,
-                'index-name'
-            )
-        );
-        // Run command
-        $result = $this->command->run(
-            $input,
-            $this->output
-        );
-
-        // Assertions
-        $this->assertEQuals(
-            $result,
-            null
-        );
-    }
-
-    public function testExcecuteWithBadJson()
-    {
-        $input = new ArgvInput(
-            array(
-                AddObjectCommand::NAME,
+                BatchWriteCommand::NAME,
                 'index-name',
-                '{"bad":"json"'
-
+                $badRequestJson
             )
         );
 
@@ -146,10 +102,6 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
             ->with(AbstractAlgoliaCommand::ERROR_BAD_JSON_MESSAGE)
         ;
 
-        $this->client->expects($this->never())
-            ->method('initIndex')
-        ;
-
         // Run command
         $result = $this->command->run(
             $input,
@@ -157,7 +109,7 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
         );
 
         // Assertions
-        $this->assertEQuals(
+        $this->assertEquals(
             $result,
             AbstractAlgoliaCommand::STATUS_CODE_ERROR
         );
@@ -166,18 +118,32 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
     public function testExecuteIndexThrowsException()
     {
         $indexName = 'index-name';
-        $content = array(
-            'awesome' => 'content'
+        $objectIDKey = 'object-id-key';
+        $objectActionKey = 'object-action-key';
+        $requests = array(
+            array(
+                $objectIDKey => 'id0',
+                $objectActionKey => 'action0',
+                'vegetable' => 'tomato'
+            ),
+            array(
+                $objectIDKey => 'id1',
+                $objectActionKey => 'action1',
+                'vegetable' => 'celery'
+            )
         );
+        $exceptionMessage = 'exception-message';
+
         $input = new ArgvInput(
             array(
-                AddObjectCommand::NAME,
+                BatchWriteCommand::NAME,
                 $indexName,
-                json_encode($content)
+                json_encode($requests),
+                '--' . BatchWriteCommand::ARGUMENT_OBJECT_ID_KEY . '=' . $objectIDKey,
+                '--' . BatchWriteCommand::ARGUMENT_OBJECT_ACTION_KEY . '=' . $objectActionKey
             )
         );
         $index = $this->buildMock('AlgoliaSearch\Index');
-        $exceptionMessage = 'exception-message';
 
         // Expectations
         $this->client->expects($this->once())
@@ -187,13 +153,9 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
         ;
 
         $index->expects($this->once())
-            ->method('addObject')
-            ->with($content, null)
-            ->will(
-                $this->throwException(
-                    new AlgoliaException($exceptionMessage)
-                )
-            )
+            ->method('batchObjects')
+            ->with($requests, $objectIDKey, $objectActionKey)
+            ->will($this->throwException(new AlgoliaException($exceptionMessage)))
         ;
 
         $this->output->expects($this->once())
@@ -201,18 +163,21 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
             ->with($exceptionMessage)
         ;
 
-        // Run Command
-        $result = $this->command->run($input, $this->output);
+        // Run command
+        $result = $this->command->run(
+            $input,
+            $this->output
+        );
 
         // Assertions
         $this->assertEquals(
             $result,
-            AddObjectCommand::STATUS_CODE_ERROR
+            AbstractAlgoliaCommand::STATUS_CODE_ERROR
         );
     }
 }
 
-class AddObjectCommandStub extends AddObjectCommand
+class BatchWriteCommandStub extends BatchWriteCommand
 {
     protected function createClient()
     {
