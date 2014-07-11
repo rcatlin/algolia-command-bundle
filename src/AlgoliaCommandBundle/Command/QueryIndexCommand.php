@@ -5,7 +5,6 @@ namespace AlgoliaCommandBundle\Command;
 use AlgoliaCommandBundle\Query\QueryOptions;
 use AlgoliaSearch\AlgoliaException;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,8 +18,6 @@ class QueryIndexCommand extends AbstractAlgoliaCommand
     protected function configure()
     {
         parent::configure();
-
-        $definition = new InputDefinition();
 
         $this->addArgument(self::ARGUMENT_INDEX, InputArgument::REQUIRED, 'Index name.');
         $this->addArgument(self::ARGUMENT_QUERY, InputArgument::OPTIONAL, 'Query string.');
