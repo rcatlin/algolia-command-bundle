@@ -125,6 +125,20 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
         );
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Not enough arguments.
+     */
+    public function testExecuteWithoutIndexNameThrowsException()
+    {
+        $command = new QueryIndexCommandStub();
+        $command->setContainer($this->container);
+
+        $input = new ArgvInput(array());
+
+        $command->run($input, $this->output);
+    }
+
     private function buildArgvInput($arguments = array(), $options = array())
     {
         $argv = array();
