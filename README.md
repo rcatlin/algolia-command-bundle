@@ -1,6 +1,8 @@
 algolia-command-bundle
 ===============
 
+## IN EARLY DEVELOPMENT
+
 Symfony Algolia CommandBundle provides access to the Algolia API using Symfony Commands.
 
 See [Algolia REST Documentation](http://www.algolia.com/doc/rest_api)
