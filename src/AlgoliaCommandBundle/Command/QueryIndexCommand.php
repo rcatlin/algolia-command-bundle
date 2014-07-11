@@ -52,6 +52,8 @@ class QueryIndexCommand extends AbstractAlgoliaCommand
             $output->writeln($result);
         } catch (AlgoliaException $e) {
             $output->writeln($e->getMessage());
+
+            return parent::STATUS_CODE_ERROR;
         }
     }
 

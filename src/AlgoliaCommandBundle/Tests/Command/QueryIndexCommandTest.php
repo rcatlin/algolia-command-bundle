@@ -114,7 +114,15 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
         ;
 
         // Run command
-        $this->command->run($input, $this->output);
+        $result = $this->command->run(
+            $input,
+            $this->output
+        );
+
+        $this->assertEquals(
+            $result,
+            null
+        );
     }
 
     private function buildArgvInput($arguments = array(), $options = array())
