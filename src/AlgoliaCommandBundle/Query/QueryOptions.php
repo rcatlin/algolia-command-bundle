@@ -116,11 +116,11 @@ class QueryOptions
         }
 
         switch (self::$types[$key]) {
-            case 'boolean':
+            case self::TYPE_BOOLEAN:
                 return (boolean) $value;
-            case 'integer':
+            case self::TYPE_INTEGER:
                 return intval($value);
-            case 'string':
+            case self::TYPE_STRING:
                 return (string) $value;
         }
 
