@@ -43,10 +43,7 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
         );
 
         // Setup Command
-        $this->command = new QueryIndexCommandStub(
-            $this->apiKey,
-            $this->applicationId
-        );
+        $this->command = new QueryIndexCommandStub();
         $this->command->setContainer($this->container);
         $this->command->setClient($this->client);
     }
@@ -131,12 +128,9 @@ class QueryIndexCommandTest extends AlgoliaCommandBundleTestCase
      */
     public function testExecuteWithoutIndexNameThrowsException()
     {
-        $command = new QueryIndexCommandStub();
-        $command->setContainer($this->container);
-
         $input = new ArgvInput(array());
 
-        $command->run($input, $this->output);
+        $this->command->run($input, $this->output);
     }
 
     private function buildArgvInput($arguments = array(), $options = array())
