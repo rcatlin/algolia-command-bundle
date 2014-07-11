@@ -115,13 +115,25 @@ class QueryOptions
             return $value;
         }
 
-        switch (self::$types[$key]) {
+        if (isset(self::$types[$key])) {
+            return self::cast(
+                self::$types[$key],
+                $value
+            );
+        }
+
+        return $value;
+    }
+
+    private static function cast($type, $value)
+    {
+        switch ($type) {
             case self::TYPE_BOOLEAN:
                 return (boolean) $value;
             case self::TYPE_INTEGER:
                 return intval($value);
             case self::TYPE_STRING:
-                return (string) $value;
+                return strval($value);
         }
 
         return $value;

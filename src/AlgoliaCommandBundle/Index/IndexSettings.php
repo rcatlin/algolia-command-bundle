@@ -1,6 +1,6 @@
 <?php
 
-namespace AlgoliaCommandBundle\Index\IndexSettings;
+namespace AlgoliaCommandBundle\Index;
 
 class IndexSettings
 {
@@ -63,7 +63,7 @@ class IndexSettings
         self::HIGHLIGHT_PRE_TAG,
         self::HIGHLIGHT_POST_TAG,
         self::OPTIONAL_WORDS
-    )
+    );
 
     public static $types = array(
         self::ATTRIBUTES_TO_INDEX => self::TYPE_STRING_ARRAY,
@@ -95,31 +95,56 @@ class IndexSettings
             return $value;
         }
 
-        switch (self::$types[$key]) {
+        if (isset(self::$types[$key])) {
+            return self::cast(self::$types[$key], $value);
+        }
+
+        return $value;
+    }
+
+    private static function cast($type, $value)
+    {
+        switch ($type) {
             case self::TYPE_INTEGER:
                 return intval($value);
             case self::TYPE_STRING:
-                return (string) $value;
+                if ($value === false) {
+                    return '0';
+                }
+
+                return strval($value);
             case self::TYPE_STRING_ARRAY:
             case self::TYPE_ARRAY_OF_STRING:
-                foreach ($value as $i, $j) {
-                    $value[$i] = self::evaluate(self::TYPE_STRING, $j);
+                if (!is_array($value)) {
+                    return array();
+                }
+
+                foreach ($value as $i => $j) {
+                    $value[$i] = self::cast(self::TYPE_STRING, $j);
                 }
 
                 return $value;
             case self::TYPE_ARRAY_OF_STRINGS_ARRAY:
-                foreach ($value as $i, $j) {
-                    $value[$i] = self::evaluate(self::TYPE_STRING_ARRAY, $j);
+                if (!is_array($value)) {
+                    return array();
+                }
+
+                foreach ($value as $i => $j) {
+                    $value[$i] = self::cast(self::TYPE_STRING_ARRAY, $j);
                 }
 
                 return $value;
             case self::TYPE_HASH_STRING_TO_ARRAY_OF_STRINGS:
-                $hash = array();
-                foreach ($value as $i, $j) {
-                    $hash[(string) $i] = self::evaluate(self::TYPE_ARRAY_OF_STRING, $j);
+                if (!is_array($value)) {
+                    return array();
                 }
 
-                return;
+                $hash = array();
+                foreach ($value as $i => $j) {
+                    $hash[strval($i)] = self::cast(self::TYPE_ARRAY_OF_STRING, $j);
+                }
+
+                return $hash;
         }
 
         return $value;
