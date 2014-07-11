@@ -98,7 +98,7 @@ class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
         );
 
         // Assertions
-        $this->assertEQuals(
+        $this->assertEquals(
             $result,
             null
         );
