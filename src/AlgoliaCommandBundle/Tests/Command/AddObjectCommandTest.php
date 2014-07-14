@@ -8,10 +8,14 @@ use AlgoliaCommandBundle\Tests\AlgoliaCommandBundleTestCase;
 use AlgoliaSearch\AlgoliaException;
 use AlgoliaSearch\Client;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class AddObjectCommandTest extends AlgoliaCommandBundleTestCase
 {
+    private $output;
+    private $client;
+    private $container;
+    private $command;
+
     protected function setUp()
     {
         $this->output = $this->buildMock('Symfony\Component\Console\Output\OutputInterface');
